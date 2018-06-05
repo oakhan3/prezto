@@ -20,24 +20,14 @@ version is 4.3.11.
   2. Clone the repository:
 
      ```console
-     git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+     git clone --recursive git@github.com:oakhan3/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
      ```
 
-  3. Create a new Zsh configuration by copying the Zsh configuration files
-     provided:
+  3. Run the installation script:
 
-     ```sh
-     setopt EXTENDED_GLOB
-     for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
-       ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
-     done
      ```
-
-     Note: If you already have any of the given config files, ln will error. In
-     simple cases you can add `source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"` to
-     the bottom of your `.zshrc` to load prezto but keep your config intact. For
-     more complicated setups, it is recommended that you back up your original
-     configs and replace them with the provided prezto runcoms.
+     bin/install
+     ```
 
   4. Set Zsh as your default shell:
 

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+declare -a ZFILES=("zlogin" "zlogout" "zpreztorc" "zprofile" "zshenv" "zshrc")
+
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+formatted_date=$( date "+%FT%H_%M_%S" )
+BACKUP_DOTFILES_PATH="$HOME/.old_dotfiles/$formatted_date"
+
+mkdir -p "$BACKUP_DOTFILES_PATH"
+echo old zsh files backed up to: "$BACKUP_DOTFILES_PATH"
+
+for file in "${ZFILES[@]}"
+do
+  cp "$HOME/.$file" "$BACKUP_DOTFILES_PATH/.$file"
+  ln -Fs "$dir/../runcoms/$file" "$HOME/.$file"
+done
