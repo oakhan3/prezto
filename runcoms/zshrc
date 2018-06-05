@@ -1,13 +1,74 @@
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
+####################
+# SH
+####################
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt SHARE_HISTORY             # Share history between all sessions.
+setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
 
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# Customize to your needs...
+PROMPT='%F{magenta}[%c] %f'
+RPROMPT="$RPROMPT %F{yellow}%t%f"
+
+####################
+# PATH
+####################
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.yarn/bin:$PATH"
+
+####################
+# PYENV
+####################
+alias python='eval "$(pyenv init -)" python'
+alias a='eval "$(pyenv init -)"; eval "$(pyenv virtualenv-init -)"'
+
+####################
+# REVERSE SEARCH
+####################
+function exists { which $1 &> /dev/null }
+
+if exists percol; then
+    function percol_select_history() {
+        local tac
+        exists gtac && tac="gtac" || { exists tac && tac="tac" || { tac="tail -r" } }
+        BUFFER=$(fc -l -n 1 | eval $tac | percol --query "$LBUFFER")
+        CURSOR=$#BUFFER         # move cursor
+        zle -R -c               # refresh
+    }
+
+    zle -N percol_select_history
+    bindkey '^R' percol_select_history
+fi
+
+####################
+# ALIASES
+####################
+alias gs='git status'
+alias gd='git diff'
+alias ls='ls -FGap'
+
+alias chr='open -a Google\ Chrome --args --disable-web-security --user-data-dir'
+alias killchr='killall "Google Chrome"'
+
+alias mysql=/Applications/MySQLWorkbench.app/Contents/MacOS/mysql
+alias mysqldump=/Applications/MySQLWorkbench.app/Contents/MacOS/mysqldump
+
+alias killpyc='find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf'
+
+alias killempty='find . -type d -empty -delete'
+alias showempty='find . -type d -empty -print'
+
+alias dclnot='COMPOSE_HTTP_TIMEOUT=360 docker-compose logs'
+alias dcl='COMPOSE_HTTP_TIMEOUT=360 docker-compose logs --tail=60'
+
+alias mtv='eval "$(aws ecr get-login --no-include-email --region us-east-1 --profile mtv)"'
