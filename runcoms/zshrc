@@ -29,26 +29,18 @@ export PATH="$HOME/.yarn/bin:$PATH"
 ####################
 # PYENV
 ####################
-alias python='eval "$(pyenv init -)" python'
-alias a='eval "$(pyenv init -)"; eval "$(pyenv virtualenv-init -)"'
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
-####################
-# REVERSE SEARCH
-####################
-function exists { which $1 &> /dev/null }
-
-if exists percol; then
-    function percol_select_history() {
-        local tac
-        exists gtac && tac="gtac" || { exists tac && tac="tac" || { tac="tail -r" } }
-        BUFFER=$(fc -l -n 1 | eval $tac | percol --query "$LBUFFER")
-        CURSOR=$#BUFFER         # move cursor
-        zle -R -c               # refresh
-    }
-
-    zle -N percol_select_history
-    bindkey '^R' percol_select_history
+# Create a sorted array of available virtualenv related 'pyenv' commands to
+# look for plugins of interest. Scanning shell '$path' isn't enough as they
+# can exist in 'pyenv' synthesized paths (e.g., '~/.pyenv/plugins') instead.
+local -a pyenv_plugins
+if (( $+commands[pyenv] )); then
+pyenv_plugins=(${(@oM)${(f)"$(pyenv commands --no-sh 2>/dev/null)"}:#virtualenv*})
 fi
+
+unset pyenv_plugins
 
 ####################
 # ALIASES
@@ -72,3 +64,9 @@ alias dclnot='COMPOSE_HTTP_TIMEOUT=360 docker-compose logs'
 alias dcl='COMPOSE_HTTP_TIMEOUT=360 docker-compose logs --tail=60'
 
 alias mtv='eval "$(aws ecr get-login --no-include-email --region us-east-1 --profile mtv)"'
+
+###################
+# FZF
+###################
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
