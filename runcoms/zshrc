@@ -18,6 +18,9 @@ fi
 PROMPT='%F{magenta}[%c] %f'
 RPROMPT="$RPROMPT %F{yellow}%t%f"
 
+# Enable scrolling in man, less, git diff etc..
+export LESS='-g -i -M -R -S -w -z-4'
+
 ####################
 # PATH
 ####################
